@@ -11,8 +11,8 @@ public class Pasture {
 	private final int width = 35;
 	private final int height = 24;
 
-	private final int wolves = 10;
-	private final int sheeps = 20;
+	private final int wolves = 1;//10;
+	private final int sheeps = 1;//20;
 	private final int plants = 40;
 
 	private final Set<Entity> world = new HashSet<Entity>();
@@ -170,22 +170,35 @@ public class Pasture {
 		return point.get(entity);
 	}
 	
-	// TEST TEST TEST
-	public Point getPosition(Entity e) {
-		return point.get(e);
-	}
-	
-	public List<Entity> getEntitiesOfView(Point p, int viewDistance) {
-		List<Entity> l = new ArrayList<Entity>();
+	public List<Entity> getEntitiesWithinView(Point p, int viewDistance){
+		List<Entity> found = new ArrayList<Entity>();
 		
-		for (Entity e : world) {
-			if (p.distance(this.getPosition(e)) <= viewDistance){
-				l.add(e);
+		for(Entity e : world) {
+			double entityX = this.getEntityPosition(e).getX();
+			double entityY = this.getEntityPosition(e).getY();
+			if(p.distance(entityX, entityY) <= viewDistance) {
+				found.add(e);
 			}
 		}
-		return l;
+		return found;
 	}
+	
+    // Do we need this? getFreeNeighbours should be used?
+    public List<Point> getAllNeighbours( Point origin ) {
+        List<Point> surrounding = new ArrayList<Point>();
 
+        int originX = origin.x;
+        int originY = origin.y;
+
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                Point p = new Point(originX + x, originY + y);
+                surrounding.add(p);
+            }
+        }
+        return surrounding;
+    }
+   
 	/** The method for the JVM to run. */
 	public static void main(String[] args) {
 

@@ -10,13 +10,11 @@ public abstract class Animal implements Entity {
 	protected int moveInterval;
 	protected int moveDelay;
 	protected int viewDistance;
+	protected int lastX, lastY;
 	protected boolean alive;
-	protected boolean eatsSheep;
-	protected boolean eatsPlants;
 
 	protected Pasture pasture;
 	protected ImageIcon image;
-	
 	
 	public Animal(Pasture pasture, int moveInterval, int viewDistance) {
 		this.pasture = pasture;
@@ -24,7 +22,11 @@ public abstract class Animal implements Entity {
 		this.moveDelay = this.moveInterval;
 		this.viewDistance = viewDistance;
 	}
+	
 
+	
+	
+	
 	/**
 	 * Returns a random free position in the pasture if there exists one.
 	 * 

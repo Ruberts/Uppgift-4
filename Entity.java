@@ -16,5 +16,7 @@ public interface Entity {
 	public ImageIcon getImage();
 
 	public boolean isCompatible(Entity otherEntity);
+	
+	public void eatenByEntity(Entity otherEntity);
 
 }

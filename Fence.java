@@ -22,4 +22,10 @@ public class Fence implements Entity{
 	public boolean isCompatible(Entity otherEntity) {
 		return false;
 	}
+
+	@Override
+	public void eatenByEntity(Entity otherEntity) {
+		// TODO Auto-generated method stub
+		
+	}
 }
