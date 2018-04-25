@@ -7,8 +7,9 @@ import javax.swing.ImageIcon;
 public class Plant implements Entity {
 	private final ImageIcon image = new ImageIcon("src/plant.gif");
 	private final Pasture pasture;
+	
 	/* Interval until the plant spreads */
-	static final int spreadInterval = 50;
+	static final int spreadInterval = 10;
 	private int spreadingDelay;
 	
 	public Plant(Pasture pasture) {
@@ -24,12 +25,7 @@ public class Plant implements Entity {
 				
 				this.spreadingDelay = spreadInterval;
 			}
-		}
-		/* If a sheep finds a plant it eats it! */
-		for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
-			this.eatenByEntity(e);
-		}		
-
+		}	
 	}
 	
 	public void eatenBySheep(Entity otherEntity) {
@@ -83,12 +79,11 @@ public class Plant implements Entity {
 		throw new MissingResourceException("There is no free space" + " left in the pasture", "Pasture", "");
 	}
 	
-	
-	/* Check if a sheep is on the same position of the plant */
 	@Override
-	public void eatenByEntity(Entity otherEntity) {
-		if(otherEntity instanceof Sheep) {
-			pasture.removeEntity(this);
-		}	
+	public void eatOtherEntity(Entity otherEntity) {}
+
+	@Override
+	public void kill() {
+		pasture.removeEntity(this);
 	}
 }

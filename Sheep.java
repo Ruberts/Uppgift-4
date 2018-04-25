@@ -1,8 +1,3 @@
-import java.awt.Point;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.ImageIcon;
 
 public class Sheep extends Animal {
@@ -10,75 +5,13 @@ public class Sheep extends Animal {
 	public Sheep(Pasture pasture) {
 		super(pasture, 10, 20);
 		this.image = new ImageIcon("src/sheep.gif");
-		this.alive = true;
-		
 		this.lastX = 1;
 		this.lastY = 1;
 	}
 
 	@Override
-	public void tick() {
-		if (alive) {
-			moveDelay--;
-		}
-		if (moveDelay == 0) {	
-			List<Entity> seen = pasture.getEntitiesWithinView(pasture.getEntityPosition(this), this.viewDistance);
-			
-			Map<Point, Double> scoredNeighbours = new HashMap<Point, Double>();
-			Point here = pasture.getEntityPosition(this);
-			
-			for(Point neighbour : pasture.getAllNeighbours(here)) {
-				Double score = 0.0;
-				
-				for(Entity e : seen) {
-					Double distance = neighbour.distance(pasture.getEntityPosition(e));
-					
-					/*  */
-					if(e instanceof Wolf) {
-						System.out.println("Sheep spotted wolf, run!!");
-						score += 100 / (1 + distance);
-					}
-					else if(e instanceof Plant) {
-						score += 50 / (1 + distance);
-					}
-				}
-				scoredNeighbours.put(neighbour, score);
-			}
-			
-			/* Get direction */
-			Map.Entry<Point, Double> maxEntry = null;
-			for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
-				if(maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-//					System.out.println("Wolf spotted a sheep, pursuing it!");
-					maxEntry = entry;
-				}
-			}
-			Point preferredNeighbour = maxEntry.getKey();
-			
-			/* If there's no interesting direction continue on the same direction */
-			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-				preferredNeighbour = new Point(
-						(int) pasture.getEntityPosition(this).getX() + lastX,
-						(int) pasture.getEntityPosition(this).getY() + lastY);
-			}
-		
-			/* If last direction isn't possible, take a random direction */
-			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-				preferredNeighbour = getRandomMember(pasture.getFreeNeighbours(this));
-			}
-			
-			/* Update the direction */
-			lastX = (int)preferredNeighbour.getX() - (int)pasture.getEntityPosition(this).getX();
-			lastY = (int)preferredNeighbour.getY() - (int)pasture.getEntityPosition(this).getY();
-			
-			/* Move the wolf */
-			pasture.moveEntity(this, preferredNeighbour);
-			this.moveDelay = this.moveInterval;
-			
-			for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
-				this.eatenByEntity(e);
-			}
-		}
+	public void tick() {		
+		moveTheEntity();
 	}
 
 	@Override
@@ -97,11 +30,18 @@ public class Sheep extends Animal {
 		return false;
 	}
 
+
 	@Override
-	public void eatenByEntity(Entity otherEntity) {
-		if(otherEntity instanceof Wolf) {
-			pasture.removeEntity(this);
-			this.alive = false;
-		}
+	public void eatOtherEntity(Entity otherEntity) {
+		if(otherEntity instanceof Plant) {
+			System.out.println("Sheep ate Plant!");
+			otherEntity.kill();
+		}	
+	}
+
+	@Override
+	public void kill() {
+		this.alive = false;
+		pasture.removeEntity(this);
 	}
 }

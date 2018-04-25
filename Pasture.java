@@ -11,9 +11,9 @@ public class Pasture {
 	private final int width = 35;
 	private final int height = 24;
 
-	private final int wolves = 1;//10;
-	private final int sheeps = 1;//20;
-	private final int plants = 40;
+	private final int wolves = 0;//10;
+	private final int sheep = 20;//20;
+	private final int plants = 40;//40;
 
 	private final Set<Entity> world = new HashSet<Entity>();
 	private final Map<Point, List<Entity>> grid = new HashMap<Point, List<Entity>>();
@@ -51,7 +51,7 @@ public class Pasture {
 			addEntity(w1, w1.getFreePosition(width, height));
 		}
 
-		for (int i = 0; i < sheeps; i++) {
+		for (int i = 0; i < sheep; i++) {
 			Sheep s1 = new Sheep(this);
 			addEntity(s1, s1.getFreePosition(width, height));
 		}
@@ -184,7 +184,7 @@ public class Pasture {
 	}
 	
     // Do we need this? getFreeNeighbours should be used?
-    public List<Point> getAllNeighbours( Point origin ) {
+    public List<Point> getAllNeighbours(Point origin) {
         List<Point> surrounding = new ArrayList<Point>();
 
         int originX = origin.x;

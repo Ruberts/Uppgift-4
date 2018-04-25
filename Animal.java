@@ -1,6 +1,8 @@
 import java.awt.Point;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.MissingResourceException;
 
 import javax.swing.ImageIcon;
@@ -21,11 +23,78 @@ public abstract class Animal implements Entity {
 		this.moveInterval = moveInterval;
 		this.moveDelay = this.moveInterval;
 		this.viewDistance = viewDistance;
+		this.alive = true;
 	}
 	
+	
+	public void moveTheEntity() {
+		if (alive) {
+			moveDelay--;
+		}
+		if (moveDelay == 0) {	
+			List<Entity> seen = pasture.getEntitiesWithinView(pasture.getEntityPosition(this), this.viewDistance);
+			
+			Map<Point, Double> scoredNeighbours = new HashMap<Point, Double>();
+			Point here = pasture.getEntityPosition(this);
+			
+			for(Point neighbour : pasture.getAllNeighbours(here)) {
+				Double score = 0.0;
+				
+				for(Entity e : seen) {
+					Double distance = neighbour.distance(pasture.getEntityPosition(e));
+					
+					/*  */
+					if(this instanceof Sheep) {
+						if(e instanceof Wolf) {
+							score += 100 / (1 + distance);
+						}
+						else if(e instanceof Plant) {
+							score += 50 / (1 + distance);
+						}						
+					}
+					else if(this instanceof Wolf) {
+						if(e instanceof Sheep) {
+							score += 100 / (1 + distance);
+						}						
+					}	
+				}
+				scoredNeighbours.put(neighbour, score);
+			}
+			
+			/* Get direction */
+			Map.Entry<Point, Double> maxEntry = null;
+			for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
+				if(maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+					maxEntry = entry;
+				}
+			}
+			Point preferredNeighbour = maxEntry.getKey();
+			
+			/* If there's no interesting direction continue on the same direction */
+			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
+				preferredNeighbour = new Point(
+						(int) pasture.getEntityPosition(this).getX() + lastX,
+						(int) pasture.getEntityPosition(this).getY() + lastY);
+			}
+		
+			/* If last direction isn't possible, take a random direction */
+			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
+				preferredNeighbour = getRandomMember(pasture.getFreeNeighbours(this));
+			}
+			
+			/* Update the direction */
+			lastX = (int)preferredNeighbour.getX() - (int)pasture.getEntityPosition(this).getX();
+			lastY = (int)preferredNeighbour.getY() - (int)pasture.getEntityPosition(this).getY();
+			
+			/* Move the Sheep */
+			pasture.moveEntity(this, preferredNeighbour);
+			this.moveDelay = this.moveInterval;
 
-	
-	
+			for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
+				this.eatOtherEntity(e);
+			}
+		}
+	}
 	
 	/**
 	 * Returns a random free position in the pasture if there exists one.
@@ -75,5 +144,5 @@ public abstract class Animal implements Entity {
 		int n = (int) (Math.random() * c.size());
 
 		return c.get(n);
-	}
+	}	
 }

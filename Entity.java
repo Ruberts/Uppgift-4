@@ -17,6 +17,8 @@ public interface Entity {
 
 	public boolean isCompatible(Entity otherEntity);
 	
-	public void eatenByEntity(Entity otherEntity);
+	public void eatOtherEntity(Entity otherEntity);
+	
+	public void kill();
 
 }

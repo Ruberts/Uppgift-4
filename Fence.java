@@ -24,7 +24,13 @@ public class Fence implements Entity{
 	}
 
 	@Override
-	public void eatenByEntity(Entity otherEntity) {
+	public void eatOtherEntity(Entity otherEntity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void kill() {
 		// TODO Auto-generated method stub
 		
 	}
