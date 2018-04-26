@@ -3,10 +3,11 @@ import javax.swing.ImageIcon;
 public class Wolf extends Animal {
 	
 	public Wolf(Pasture pasture) {
-		super(pasture, 20, 20);
-		this.image = new ImageIcon("src/wolf.gif");
+		super(pasture, 10, 20);
+		this.image = new ImageIcon("resource/wolf.gif");
 		this.lastX = 1;
 		this.lastY = 1;
+		this.liveWithoutFood = 200;
 	}
 
 	@Override

@@ -5,32 +5,33 @@ import java.util.MissingResourceException;
 import javax.swing.ImageIcon;
 
 public class Plant implements Entity {
-	private final ImageIcon image = new ImageIcon("src/plant.gif");
+	private final ImageIcon image = new ImageIcon("resource/plant.gif");
 	private final Pasture pasture;
+	protected boolean alive;
 	
 	/* Interval until the plant spreads */
-	static final int spreadInterval = 10;
+	static final int spreadInterval = 30;
 	private int spreadingDelay;
 	
 	public Plant(Pasture pasture) {
 		this.pasture = pasture;
 		this.spreadingDelay = spreadInterval;
+		this.alive = true;
 	}
 
 	@Override
 	public void tick() {
-		if(spreadingDelay-- <= 0) {
-			if(pasture.getFreeNeighbours(this).size() > 0) {
-				pasture.addEntity(new Plant(pasture), pasture.getFreeNeighbours(this).get((int)(Math.random() * pasture.getFreeNeighbours(this).size())));
-				
-				this.spreadingDelay = spreadInterval;
+		if (alive) {
+			if (spreadingDelay-- <= 0) {
+				/* Check surroundings for an empty space to grow */
+				if (pasture.getFreeNeighbours(this).size() > 0) {
+					pasture.addEntity(new Plant(pasture), pasture.getFreeNeighbours(this)
+							.get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+					
+					/* "Reset" the timer for the newly created plant */
+					this.spreadingDelay = spreadInterval;
+				}
 			}
-		}	
-	}
-	
-	public void eatenBySheep(Entity otherEntity) {
-		if(otherEntity instanceof Sheep) {
-			pasture.removeEntity(this);
 		}
 	}
 
@@ -84,6 +85,7 @@ public class Plant implements Entity {
 
 	@Override
 	public void kill() {
+		this.alive = false;
 		pasture.removeEntity(this);
 	}
 }

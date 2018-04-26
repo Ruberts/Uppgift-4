@@ -3,7 +3,7 @@ import javax.swing.ImageIcon;
 public class Fence implements Entity{
 	
 	/** The icon of this entity. */
-	private final ImageIcon image = new ImageIcon("src/fence.gif");
+	private final ImageIcon image = new ImageIcon("resource/fence.gif");
 	private final Pasture pasture;
 	
 	public Fence(Pasture pasture) {

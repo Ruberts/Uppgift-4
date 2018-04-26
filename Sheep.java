@@ -4,14 +4,17 @@ public class Sheep extends Animal {
 	
 	public Sheep(Pasture pasture) {
 		super(pasture, 10, 20);
-		this.image = new ImageIcon("src/sheep.gif");
+		this.image = new ImageIcon("resource/sheep.gif");
 		this.lastX = 1;
 		this.lastY = 1;
+		this.liveWithoutFood = 100;
 	}
 
 	@Override
 	public void tick() {		
 		moveTheEntity();
+		starveToDeath(lastMealTime, liveWithoutFood);
+		System.out.println("Time since food " + lastMealTime + "!");
 	}
 
 	@Override
@@ -36,6 +39,8 @@ public class Sheep extends Animal {
 		if(otherEntity instanceof Plant) {
 			System.out.println("Sheep ate Plant!");
 			otherEntity.kill();
+			hasEaten = true;
+			lastMealTime = engine.getTime();;
 		}	
 	}
 

@@ -13,10 +13,15 @@ public abstract class Animal implements Entity {
 	protected int moveDelay;
 	protected int viewDistance;
 	protected int lastX, lastY;
+	protected int liveWithoutFood;
+	protected int lastMealTime;
+	protected boolean hasEaten;
 	protected boolean alive;
 
 	protected Pasture pasture;
 	protected ImageIcon image;
+	
+	protected Engine engine;
 	
 	public Animal(Pasture pasture, int moveInterval, int viewDistance) {
 		this.pasture = pasture;
@@ -24,8 +29,18 @@ public abstract class Animal implements Entity {
 		this.moveDelay = this.moveInterval;
 		this.viewDistance = viewDistance;
 		this.alive = true;
+		this.hasEaten = false;
+		this.engine = new Engine(pasture);
+		this.lastMealTime = 0;
 	}
 	
+	public void starveToDeath(int meal, int live) {
+		if((meal - engine.getTime()) > live) {
+			System.out.println("Sheep died of starvation!");
+			kill();
+		}
+	
+	}
 	
 	public void moveTheEntity() {
 		if (alive) {
@@ -86,10 +101,11 @@ public abstract class Animal implements Entity {
 			lastX = (int)preferredNeighbour.getX() - (int)pasture.getEntityPosition(this).getX();
 			lastY = (int)preferredNeighbour.getY() - (int)pasture.getEntityPosition(this).getY();
 			
-			/* Move the Sheep */
+			/* Move the Animal */
 			pasture.moveEntity(this, preferredNeighbour);
 			this.moveDelay = this.moveInterval;
-
+			
+			/* Eat the other entity if on same position */
 			for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
 				this.eatOtherEntity(e);
 			}
