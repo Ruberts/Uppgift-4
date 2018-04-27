@@ -4,7 +4,7 @@ import java.awt.Point;
 /**
  * A pasture contains sheep, wolves, fences, plants, and possibly other
  * entities. These entities move around in the pasture and try to find food,
- * other entities of the same kind and run away from possible enimies.
+ * other entities of the same kind and run away from possible enemies.
  */
 public class Pasture {
 
@@ -12,14 +12,15 @@ public class Pasture {
 	private final int height = 24;
 
 	private final int wolves = 0;//10;
-	private final int sheep = 2;//20;
-	private final int plants = 0;//40;
+	private final int sheep = 1;//20;
+	private final int plants = 1;//40;
 
 	private final Set<Entity> world = new HashSet<Entity>();
 	private final Map<Point, List<Entity>> grid = new HashMap<Point, List<Entity>>();
 	private final Map<Entity, Point> point = new HashMap<Entity, Point>();
 
 	private final PastureGUI gui;
+	private final Engine engine;
 
 	/**
 	 * Creates a new instance of this class and places the entities in it on random
@@ -27,7 +28,8 @@ public class Pasture {
 	 */
 	public Pasture() {
 
-		Engine engine = new Engine(this);
+//		Engine engine = new Engine(this);
+		engine = new Engine(this);
 		gui = new PastureGUI(width, height, engine);
 
 		/*
@@ -62,6 +64,10 @@ public class Pasture {
 		}
 
 		gui.update();
+	}
+	
+	public int getTime() {
+		return engine.getTime();
 	}
 	
 	public void refresh() {

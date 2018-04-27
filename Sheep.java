@@ -8,15 +8,18 @@ public class Sheep extends Animal {
 		this.lastX = 1;
 		this.lastY = 1;
 		this.liveWithoutFood = 100;
+		this.timeToMultiply = 101;
 	}
 
 	@Override
-	public void tick() {		
-		moveTheEntity();
-		starveToDeath(lastMealTime, liveWithoutFood);
-		System.out.println("Time since food " + lastMealTime + "!");
+	public void tick() {
+		if (alive) {
+			moveTheEntity();
+			starveToDeath(lastMealTime, liveWithoutFood, this);
+			multiplyEntity(hasEaten, timeToMultiply);
+		}
 	}
-
+	
 	@Override
 	public ImageIcon getImage() {
 		return image;
@@ -40,13 +43,14 @@ public class Sheep extends Animal {
 			System.out.println("Sheep ate Plant!");
 			otherEntity.kill();
 			hasEaten = true;
-			lastMealTime = engine.getTime();;
+			lastMealTime = pasture.getTime();
 		}	
 	}
 
-	@Override
-	public void kill() {
-		this.alive = false;
-		pasture.removeEntity(this);
-	}
+	/* remove since we have it in Animal */
+//	@Override
+//	public void kill() {
+//		this.alive = false;
+//		pasture.removeEntity(this);
+//	}
 }

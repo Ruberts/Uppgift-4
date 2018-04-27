@@ -15,13 +15,14 @@ public abstract class Animal implements Entity {
 	protected int lastX, lastY;
 	protected int liveWithoutFood;
 	protected int lastMealTime;
+	protected int timeToMultiply;
 	protected boolean hasEaten;
 	protected boolean alive;
 
 	protected Pasture pasture;
 	protected ImageIcon image;
+	protected final Engine engine;
 	
-	protected Engine engine;
 	
 	public Animal(Pasture pasture, int moveInterval, int viewDistance) {
 		this.pasture = pasture;
@@ -31,21 +32,31 @@ public abstract class Animal implements Entity {
 		this.alive = true;
 		this.hasEaten = false;
 		this.engine = new Engine(pasture);
-		this.lastMealTime = 0;
 	}
 	
-	public void starveToDeath(int meal, int live) {
-		if((meal - engine.getTime()) > live) {
-			System.out.println("Sheep died of starvation!");
-			kill();
+	/* Animals multiply if correct conditions are fulfilled */
+	public void multiplyEntity(boolean eaten, int time) {
+		if(eaten && (pasture.getTime() >= time)) {
+			System.out.println("Sheep got an offspring!");
+			pasture.addEntity(new Sheep(pasture), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
 		}
+	}
 	
+	/* If the Animal hasn't eaten in a set amount of time, it'll die of starvation */
+	public void starveToDeath(int lastMeal, int withoutFood, Entity e) {
+		if((pasture.getTime() - lastMeal) >= withoutFood) {
+			System.out.println(e.getClass().getName() + " died of starvation!");
+			e.kill();
+		}
+	}
+	
+	public void kill() {
+		this.alive = false;
+		pasture.removeEntity(this);
 	}
 	
 	public void moveTheEntity() {
-		if (alive) {
-			moveDelay--;
-		}
+		moveDelay--;
 		if (moveDelay == 0) {	
 			List<Entity> seen = pasture.getEntitiesWithinView(pasture.getEntityPosition(this), this.viewDistance);
 			
@@ -60,11 +71,11 @@ public abstract class Animal implements Entity {
 					
 					/*  */
 					if(this instanceof Sheep) {
-						if(e instanceof Wolf) {
+//						if(e instanceof Wolf) {
+//							score += 100 / (1 + distance);
+//						}
+						if(e instanceof Plant) {
 							score += 100 / (1 + distance);
-						}
-						else if(e instanceof Plant) {
-							score += 50 / (1 + distance);
 						}						
 					}
 					else if(this instanceof Wolf) {

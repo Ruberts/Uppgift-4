@@ -8,11 +8,15 @@ public class Wolf extends Animal {
 		this.lastX = 1;
 		this.lastY = 1;
 		this.liveWithoutFood = 200;
+		this.timeToMultiply = 201;
 	}
 
 	@Override
-	public void tick() {		
-		moveTheEntity();
+	public void tick() {
+		if (alive) {
+			moveTheEntity();
+			starveToDeath(lastMealTime, liveWithoutFood, this);
+		}
 	}
 
 	@Override
@@ -25,6 +29,9 @@ public class Wolf extends Animal {
 		if(otherEntity instanceof Plant) {
 			return true;
 		}
+		if(otherEntity instanceof Sheep) {
+			return true;
+		}
 		return false;
 	}
 
@@ -33,11 +40,15 @@ public class Wolf extends Animal {
 		if(otherEntity instanceof Sheep) {
 			System.out.println("Wolf ate sheep!");
 			otherEntity.kill();
+			hasEaten = true;
+			lastMealTime = pasture.getTime();
 		}
 	}
 
-	@Override
-	public void kill() {
-		// TODO Auto-generated method stub
-	}
+	/* remove since we have it in Animal */	
+//	@Override
+//	public void kill() {
+//		this.alive = false;
+//		pasture.removeEntity(this);
+//	}
 }

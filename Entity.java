@@ -20,5 +20,6 @@ public interface Entity {
 	public void eatOtherEntity(Entity otherEntity);
 	
 	public void kill();
-
+	
+	public void multiplyEntity(boolean eaten, int time);
 }

@@ -34,4 +34,10 @@ public class Fence implements Entity{
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void multiplyEntity(boolean eaten, int time) {
+		// TODO Auto-generated method stub
+		
+	}
 }
