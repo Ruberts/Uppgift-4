@@ -11,9 +11,10 @@ public class Pasture {
 	private final int width = 35;
 	private final int height = 24;
 
-	private final int wolves = 0;//10;
-	private final int sheep = 1;//20;
-	private final int plants = 1;//40;
+	private final int wolves = 10;//10
+	private final int sheep = 20;//20
+	private final int plants = 40;//40
+	private final int fences = 40;
 
 	private final Set<Entity> world = new HashSet<Entity>();
 	private final Map<Point, List<Entity>> grid = new HashMap<Point, List<Entity>>();
@@ -28,7 +29,6 @@ public class Pasture {
 	 */
 	public Pasture() {
 
-//		Engine engine = new Engine(this);
 		engine = new Engine(this);
 		gui = new PastureGUI(width, height, engine);
 
@@ -43,6 +43,11 @@ public class Pasture {
 		for (int i = 1; i < height - 1; i++) {
 			addEntity(new Fence(this), new Point(0, i));
 			addEntity(new Fence(this), new Point(width - 1, i));
+		}
+		
+		for(int i = 0; i < fences; i++) {
+			Fence f1 = new Fence(this);
+			addEntity(f1, f1.getFreePosition(width, height));			
 		}
 
 		/*
@@ -171,7 +176,7 @@ public class Pasture {
 				return false;
 		return true;
 	}
-
+	
 	public Point getEntityPosition(Entity entity) {
 		return point.get(entity);
 	}
@@ -207,7 +212,6 @@ public class Pasture {
    
 	/** The method for the JVM to run. */
 	public static void main(String[] args) {
-
 		new Pasture();
 	}
 }

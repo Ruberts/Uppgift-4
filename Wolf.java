@@ -3,12 +3,14 @@ import javax.swing.ImageIcon;
 public class Wolf extends Animal {
 	
 	public Wolf(Pasture pasture) {
-		super(pasture, 10, 20);
+		super(pasture, 20, 3);
 		this.image = new ImageIcon("resource/wolf.gif");
 		this.lastX = 1;
 		this.lastY = 1;
 		this.liveWithoutFood = 200;
 		this.timeToMultiply = 201;
+		this.hasEaten = false;
+		this.lastMealTime = pasture.getTime();
 	}
 
 	@Override
@@ -16,6 +18,7 @@ public class Wolf extends Animal {
 		if (alive) {
 			moveTheEntity();
 			starveToDeath(lastMealTime, liveWithoutFood, this);
+			multiplyEntity(hasEaten, liveWithoutFood, this);
 		}
 	}
 
@@ -38,17 +41,10 @@ public class Wolf extends Animal {
 	@Override
 	public void eatOtherEntity(Entity otherEntity) {
 		if(otherEntity instanceof Sheep) {
-			System.out.println("Wolf ate sheep!");
 			otherEntity.kill();
 			hasEaten = true;
 			lastMealTime = pasture.getTime();
+			System.out.println("Wolf ate a sheep at " + lastMealTime);
 		}
 	}
-
-	/* remove since we have it in Animal */	
-//	@Override
-//	public void kill() {
-//		this.alive = false;
-//		pasture.removeEntity(this);
-//	}
 }

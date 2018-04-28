@@ -16,9 +16,9 @@ public abstract class Animal implements Entity {
 	protected int liveWithoutFood;
 	protected int lastMealTime;
 	protected int timeToMultiply;
+	protected int multiplayInterval;
 	protected boolean hasEaten;
 	protected boolean alive;
-
 	protected Pasture pasture;
 	protected ImageIcon image;
 	protected final Engine engine;
@@ -30,18 +30,29 @@ public abstract class Animal implements Entity {
 		this.moveDelay = this.moveInterval;
 		this.viewDistance = viewDistance;
 		this.alive = true;
-		this.hasEaten = false;
 		this.engine = new Engine(pasture);
 	}
 	
 	/* Animals multiply if correct conditions are fulfilled */
-	public void multiplyEntity(boolean eaten, int time) {
-		if(eaten && (pasture.getTime() >= time)) {
-			System.out.println("Sheep got an offspring!");
-			pasture.addEntity(new Sheep(pasture), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+	public void multiplyEntity(boolean eaten, int time, Entity e) {
+		if (eaten && (timeToMultiply-- <= 0)) {
+			if (pasture.getFreeNeighbours(this).size() > 0) {
+				if (e instanceof Sheep) {
+					System.out.println("Sheep got an offspring!");
+					pasture.addEntity(new Sheep(pasture), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+
+				} else if (e instanceof Wolf) {
+					System.out.println("Wolf got an offspring!");
+					pasture.addEntity(new Wolf(pasture), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+				}
+
+				/* "Reset" the timer for the newly born Animal */
+				this.timeToMultiply = multiplayInterval;
+				this.hasEaten = false;
+			}
 		}
 	}
-	
+
 	/* If the Animal hasn't eaten in a set amount of time, it'll die of starvation */
 	public void starveToDeath(int lastMeal, int withoutFood, Entity e) {
 		if((pasture.getTime() - lastMeal) >= withoutFood) {
@@ -58,22 +69,18 @@ public abstract class Animal implements Entity {
 	public void moveTheEntity() {
 		moveDelay--;
 		if (moveDelay == 0) {	
-			List<Entity> seen = pasture.getEntitiesWithinView(pasture.getEntityPosition(this), this.viewDistance);
+			List<Entity> entitisInView = pasture.getEntitiesWithinView(pasture.getEntityPosition(this), this.viewDistance);
 			
 			Map<Point, Double> scoredNeighbours = new HashMap<Point, Double>();
-			Point here = pasture.getEntityPosition(this);
+			Point entityPosition = pasture.getEntityPosition(this);
 			
-			for(Point neighbour : pasture.getAllNeighbours(here)) {
+			for(Point neighbour : pasture.getAllNeighbours(entityPosition)) {
 				Double score = 0.0;
 				
-				for(Entity e : seen) {
+				for(Entity e : entitisInView) {
 					Double distance = neighbour.distance(pasture.getEntityPosition(e));
-					
-					/*  */
+
 					if(this instanceof Sheep) {
-//						if(e instanceof Wolf) {
-//							score += 100 / (1 + distance);
-//						}
 						if(e instanceof Plant) {
 							score += 100 / (1 + distance);
 						}						
@@ -115,7 +122,7 @@ public abstract class Animal implements Entity {
 			/* Move the Animal */
 			pasture.moveEntity(this, preferredNeighbour);
 			this.moveDelay = this.moveInterval;
-			
+
 			/* Eat the other entity if on same position */
 			for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
 				this.eatOtherEntity(e);

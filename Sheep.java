@@ -3,12 +3,15 @@ import javax.swing.ImageIcon;
 public class Sheep extends Animal {
 	
 	public Sheep(Pasture pasture) {
-		super(pasture, 10, 20);
+		super(pasture, 10, 10);
 		this.image = new ImageIcon("resource/sheep.gif");
 		this.lastX = 1;
 		this.lastY = 1;
 		this.liveWithoutFood = 100;
 		this.timeToMultiply = 101;
+		this.multiplayInterval = 101;
+		this.hasEaten = false;
+		this.lastMealTime = pasture.getTime();
 	}
 
 	@Override
@@ -16,7 +19,7 @@ public class Sheep extends Animal {
 		if (alive) {
 			moveTheEntity();
 			starveToDeath(lastMealTime, liveWithoutFood, this);
-			multiplyEntity(hasEaten, timeToMultiply);
+			multiplyEntity(hasEaten, timeToMultiply, this);
 		}
 	}
 	
@@ -40,17 +43,10 @@ public class Sheep extends Animal {
 	@Override
 	public void eatOtherEntity(Entity otherEntity) {
 		if(otherEntity instanceof Plant) {
-			System.out.println("Sheep ate Plant!");
 			otherEntity.kill();
 			hasEaten = true;
 			lastMealTime = pasture.getTime();
+			System.out.println("sheep ate a plant at " + lastMealTime);
 		}	
 	}
-
-	/* remove since we have it in Animal */
-//	@Override
-//	public void kill() {
-//		this.alive = false;
-//		pasture.removeEntity(this);
-//	}
 }

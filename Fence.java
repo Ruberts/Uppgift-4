@@ -1,8 +1,10 @@
+import java.awt.Point;
+import java.util.Collection;
+import java.util.MissingResourceException;
+
 import javax.swing.ImageIcon;
 
-public class Fence implements Entity{
-	
-	/** The icon of this entity. */
+public class Fence implements Entity{	
 	private final ImageIcon image = new ImageIcon("resource/fence.gif");
 	private final Pasture pasture;
 	
@@ -23,6 +25,37 @@ public class Fence implements Entity{
 		return false;
 	}
 
+	public Point getFreePosition(int width, int height) throws MissingResourceException {
+		Point position = new Point((int) (Math.random() * width), (int) (Math.random() * height));
+		
+		int p = position.x + position.y * width;
+		int m = height * width;
+		int q = 97; // any large prime will do
+		
+		for (int i = 0; i < m; i++) {
+			int j = (p + i * q) % m;
+			int x = j % width;
+			int y = j / width;
+			
+			position = new Point(x, y);
+			boolean free = true;
+			
+			Collection<Entity> c = pasture.getEntitiesAt(position);
+			if (c != null) {
+				for (Entity thisThing : c) {
+					if (!isCompatible(thisThing)) {
+						free = false;
+						break;
+					}
+				}
+			}
+			if (free) {
+				return position;
+			}
+		}
+		throw new MissingResourceException("There is no free space" + " left in the pasture", "Pasture", "");
+	}
+	
 	@Override
 	public void eatOtherEntity(Entity otherEntity) {
 		// TODO Auto-generated method stub
@@ -36,7 +69,7 @@ public class Fence implements Entity{
 	}
 
 	@Override
-	public void multiplyEntity(boolean eaten, int time) {
+	public void multiplyEntity(boolean eaten, int time, Entity e) {
 		// TODO Auto-generated method stub
 		
 	}

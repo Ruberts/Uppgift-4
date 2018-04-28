@@ -21,5 +21,5 @@ public interface Entity {
 	
 	public void kill();
 	
-	public void multiplyEntity(boolean eaten, int time);
+	public void multiplyEntity(boolean eaten, int time, Entity e);
 }
