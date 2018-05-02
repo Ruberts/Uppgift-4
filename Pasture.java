@@ -1,5 +1,9 @@
 import java.util.*;
-import java.awt.Point;
+import java.util.List;
+
+import javax.swing.*;
+
+import java.awt.*;
 
 /**
  * A pasture contains sheep, wolves, fences, plants, and possibly other
@@ -27,7 +31,7 @@ public class Pasture {
 	 * Creates a new instance of this class and places the entities in it on random
 	 * positions.
 	 */
-	public Pasture() {
+	public Pasture(int wolfSpeed, int wolfView, int sheepSpeed, int sheepView) {
 
 		engine = new Engine(this);
 		gui = new PastureGUI(width, height, engine);
@@ -54,12 +58,12 @@ public class Pasture {
 		 * Now insert the right number of different entities in the pasture.
 		 */
 		for (int i = 0; i < wolves; i++) {
-			Wolf w1 = new Wolf(this);
+			Wolf w1 = new Wolf(this, wolfSpeed, wolfView);
 			addEntity(w1, w1.getFreePosition(width, height));
 		}
 
 		for (int i = 0; i < sheep; i++) {
-			Sheep s1 = new Sheep(this);
+			Sheep s1 = new Sheep(this, sheepSpeed, sheepView);
 			addEntity(s1, s1.getFreePosition(width, height));
 		}
 		
@@ -181,12 +185,13 @@ public class Pasture {
 		return point.get(entity);
 	}
 	
+	/* Get all entities within the view of the entity*/
 	public List<Entity> getEntitiesWithinView(Point p, int viewDistance){
 		List<Entity> found = new ArrayList<Entity>();
-		
 		for(Entity e : world) {
 			double entityX = this.getEntityPosition(e).getX();
 			double entityY = this.getEntityPosition(e).getY();
+			
 			if(p.distance(entityX, entityY) <= viewDistance) {
 				found.add(e);
 			}
@@ -194,7 +199,7 @@ public class Pasture {
 		return found;
 	}
 	
-    // Do we need this? getFreeNeighbours should be used?
+    // Do we need this? getFreeNeighbours should be used? 
     public List<Point> getAllNeighbours(Point origin) {
         List<Point> surrounding = new ArrayList<Point>();
 
@@ -212,6 +217,34 @@ public class Pasture {
    
 	/** The method for the JVM to run. */
 	public static void main(String[] args) {
-		new Pasture();
+		JFrame f = new JFrame();
+		InitialParameters p = new InitialParameters();
+		p.add("wolfSpeed", "Speed of the wolf?", "20");
+		p.add("wolfView", "View distance of the wolf?", "3");
+		p.add("sheepSpeed", "Speed of the sheep?", "20");
+		p.add("sheepView", "View distance of the sheep?", "5");
+		p.add("plantSpread", "How fast should the plants spread?", "30");
+
+		JButton klar = new JButton("Klar!");
+
+		p.add(klar);
+		klar.addActionListener(p);
+
+		f.add(p);
+		f.pack();
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		f.setLocation(screenSize.width / 2 - f.getWidth() / 2, screenSize.height / 2 - f.getHeight() / 2);
+
+		f.setVisible(true);
+//		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		Map<String, JTextField> m = p.getMap();
+
+		new Pasture(
+				Integer.parseInt(m.get("wolfSpeed").getText()),
+				Integer.parseInt(m.get("wolfView").getText()),
+				Integer.parseInt(m.get("sheepSpeed").getText()),
+				Integer.parseInt(m.get("sheepView").getText()));
 	}
 }

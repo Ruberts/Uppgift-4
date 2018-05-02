@@ -2,8 +2,8 @@ import javax.swing.ImageIcon;
 
 public class Wolf extends Animal {
 	
-	public Wolf(Pasture pasture) {
-		super(pasture, 20, 3);
+	public Wolf(Pasture pasture, int speed, int viewDistance) {
+		super(pasture, speed, viewDistance);
 		this.image = new ImageIcon("resource/wolf.gif");
 		this.lastX = 1;
 		this.lastY = 1;
@@ -37,7 +37,7 @@ public class Wolf extends Animal {
 		}
 		return false;
 	}
-
+	
 	@Override
 	public void eatOtherEntity(Entity otherEntity) {
 		if(otherEntity instanceof Sheep) {

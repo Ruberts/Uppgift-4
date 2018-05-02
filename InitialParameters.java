@@ -15,14 +15,16 @@ import javax.swing.JTextField;
 public class InitialParameters extends JPanel implements ActionListener {
 	
 	InitialParameters() {
+
     }
 
 	void init() {
 		setLayout(new GridLayout(m.size() + 1, 2));
 	}
 
-	private Map<String, JTextField> m = new HashMap<String, JTextField>();
+	public Map<String, JTextField> m = new HashMap<String, JTextField>();
 	// The values for all parameters are stored in the map m
+	
 
 	public void add(String param, String description, String _default) {
 		JLabel label = new JLabel(description);
@@ -35,6 +37,10 @@ public class InitialParameters extends JPanel implements ActionListener {
 
 		setLayout(new GridLayout(m.size() + 1, 2, 10, 0));
 	}
+	
+	public Map<String, JTextField> getMap() {
+		return m;
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -44,30 +50,5 @@ public class InitialParameters extends JPanel implements ActionListener {
 			System.out.print(entry.getValue().getText());
 			System.out.println();
 		}
-	}
-
-	public static void main(String[] arg) {
-		JFrame f = new JFrame();
-		InitialParameters p = new InitialParameters();
-		p.add("name", "Vad heter du", "Kalle");
-		p.add("age", "Hur gammal är du", "123");
-		p.add("color", "Vad är din favoritfärg", "blå");
-		p.add("finger", "Hur många fingrar håller jag upp", "3");
-		p.add("friday", "När är det fredag?", "idag");
-		p.add("rain", "Regnar det?", "ja");
-
-		JButton klar = new JButton("Klar!");
-
-		p.add(klar);
-		klar.addActionListener(p);
-
-		f.add(p);
-		f.pack();
-
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		f.setLocation(screenSize.width / 2 - f.getWidth() / 2, screenSize.height / 2 - f.getHeight() / 2);
-
-		f.setVisible(true);
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }

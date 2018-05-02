@@ -2,8 +2,8 @@ import javax.swing.ImageIcon;
 
 public class Sheep extends Animal {
 	
-	public Sheep(Pasture pasture) {
-		super(pasture, 10, 10);
+	public Sheep(Pasture pasture, int speed, int distance) {
+		super(pasture, speed, distance);
 		this.image = new ImageIcon("resource/sheep.gif");
 		this.lastX = 1;
 		this.lastY = 1;

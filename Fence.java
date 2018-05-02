@@ -13,9 +13,6 @@ public class Fence implements Entity{
 	}
 	
 	@Override
-	public void tick() {}
-
-	@Override
 	public ImageIcon getImage() {
 		return image;
 	}
@@ -57,20 +54,22 @@ public class Fence implements Entity{
 	}
 	
 	@Override
+	public void tick() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public void eatOtherEntity(Entity otherEntity) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void kill() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void multiplyEntity(boolean eaten, int time, Entity e) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 }

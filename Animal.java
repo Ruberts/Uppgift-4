@@ -23,7 +23,6 @@ public abstract class Animal implements Entity {
 	protected ImageIcon image;
 	protected final Engine engine;
 	
-	
 	public Animal(Pasture pasture, int moveInterval, int viewDistance) {
 		this.pasture = pasture;
 		this.moveInterval = moveInterval;
@@ -35,15 +34,13 @@ public abstract class Animal implements Entity {
 	
 	/* Animals multiply if correct conditions are fulfilled */
 	public void multiplyEntity(boolean eaten, int time, Entity e) {
-		if (eaten && (timeToMultiply-- <= 0)) {
-			if (pasture.getFreeNeighbours(this).size() > 0) {
-				if (e instanceof Sheep) {
-					System.out.println("Sheep got an offspring!");
-					pasture.addEntity(new Sheep(pasture), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+		if(eaten && (timeToMultiply-- <= 0)) {
+			if(pasture.getFreeNeighbours(this).size() > 0) {
+				if(e instanceof Sheep) {
+					pasture.addEntity(new Sheep(pasture, this.moveInterval, this.viewDistance), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
 
-				} else if (e instanceof Wolf) {
-					System.out.println("Wolf got an offspring!");
-					pasture.addEntity(new Wolf(pasture), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+				} else if(e instanceof Wolf) {
+					pasture.addEntity(new Wolf(pasture, this.moveInterval, this.viewDistance), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
 				}
 
 				/* "Reset" the timer for the newly born Animal */
@@ -61,11 +58,13 @@ public abstract class Animal implements Entity {
 		}
 	}
 	
+	/* "Kill" the animal if hasn't eaten in a set amount of time.. */
 	public void kill() {
 		this.alive = false;
 		pasture.removeEntity(this);
 	}
 	
+	/* Calculate next direction for movement */
 	public void moveTheEntity() {
 		moveDelay--;
 		if (moveDelay == 0) {	
@@ -83,7 +82,11 @@ public abstract class Animal implements Entity {
 					if(this instanceof Sheep) {
 						if(e instanceof Plant) {
 							score += 100 / (1 + distance);
-						}						
+						}
+						if(e instanceof Wolf) {
+							score += 100 *(1 + distance);
+						}
+
 					}
 					else if(this instanceof Wolf) {
 						if(e instanceof Sheep) {
@@ -109,6 +112,11 @@ public abstract class Animal implements Entity {
 						(int) pasture.getEntityPosition(this).getX() + lastX,
 						(int) pasture.getEntityPosition(this).getY() + lastY);
 			}
+			
+//			/* If there's a threat, move away from it */
+//			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == true) {
+//				
+//			}
 		
 			/* If last direction isn't possible, take a random direction */
 			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {

@@ -10,7 +10,7 @@ public class Plant implements Entity {
 	protected boolean alive;
 	
 	/* Interval until the plant spreads */
-	static final int spreadInterval = 30;
+	static final int spreadInterval = 50;
 	private int spreadingDelay;
 	
 	public Plant(Pasture pasture) {
@@ -92,6 +92,5 @@ public class Plant implements Entity {
 	@Override
 	public void multiplyEntity(boolean eaten, int time, Entity e) {
 		// TODO Auto-generated method stub
-		
 	}
 }
