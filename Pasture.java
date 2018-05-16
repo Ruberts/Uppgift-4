@@ -5,6 +5,12 @@ import javax.swing.*;
 
 import java.awt.*;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 /**
  * A pasture contains sheep, wolves, fences, plants, and possibly other
  * entities. These entities move around in the pasture and try to find food,
@@ -15,9 +21,9 @@ public class Pasture {
 	private final int width = 35;
 	private final int height = 24;
 
-	private final int wolves = 10;//10
-	private final int sheep = 20;//20
-	private final int plants = 40;//40
+	private final int wolves = 1;//10
+	private final int sheep = 5;//20
+	private final int plants = 40;
 	private final int fences = 40;
 
 	private final Set<Entity> world = new HashSet<Entity>();
@@ -31,7 +37,7 @@ public class Pasture {
 	 * Creates a new instance of this class and places the entities in it on random
 	 * positions.
 	 */
-	public Pasture(int wolfSpeed, int wolfView, int sheepSpeed, int sheepView) {
+	public Pasture(int wolfSpeed, int wolfView, int sheepSpeed, int sheepView, int plantSpread) {
 
 		engine = new Engine(this);
 		gui = new PastureGUI(width, height, engine);
@@ -57,6 +63,12 @@ public class Pasture {
 		/*
 		 * Now insert the right number of different entities in the pasture.
 		 */
+		
+		for (int i = 0; i < plants; i++) {
+			Plant p1 = new Plant(this, plantSpread);
+			addEntity(p1, p1.getFreePosition(width, height));
+		}
+
 		for (int i = 0; i < wolves; i++) {
 			Wolf w1 = new Wolf(this, wolfSpeed, wolfView);
 			addEntity(w1, w1.getFreePosition(width, height));
@@ -65,11 +77,6 @@ public class Pasture {
 		for (int i = 0; i < sheep; i++) {
 			Sheep s1 = new Sheep(this, sheepSpeed, sheepView);
 			addEntity(s1, s1.getFreePosition(width, height));
-		}
-		
-		for (int i = 0; i < plants; i++) {
-			Plant p1 = new Plant(this);
-			addEntity(p1, p1.getFreePosition(width, height));
 		}
 
 		gui.update();
@@ -154,7 +161,7 @@ public class Pasture {
 		}
 	}
 
-	public List<Point> getFreeNeighbours(Entity entity) {
+	public List<Point> getFreeNeighbors(Entity entity) {
 		List<Point> free = new ArrayList<Point>();
 
 		int entityX = getEntityPosition(entity).x;
@@ -169,9 +176,8 @@ public class Pasture {
 		}
 		return free;
 	}
-
+	
 	private boolean freeSpace(Point p, Entity e) {
-
 		List<Entity> l = grid.get(p);
 		if (l == null)
 			return true;
@@ -199,8 +205,8 @@ public class Pasture {
 		return found;
 	}
 	
-    // Do we need this? getFreeNeighbours should be used? 
-    public List<Point> getAllNeighbours(Point origin) {
+    /* Get all the neighbors from current point */
+    public List<Point> getAllNeighbors(Point origin) {
         List<Point> surrounding = new ArrayList<Point>();
 
         int originX = origin.x;
@@ -217,34 +223,6 @@ public class Pasture {
    
 	/** The method for the JVM to run. */
 	public static void main(String[] args) {
-		JFrame f = new JFrame();
-		InitialParameters p = new InitialParameters();
-		p.add("wolfSpeed", "Speed of the wolf?", "20");
-		p.add("wolfView", "View distance of the wolf?", "3");
-		p.add("sheepSpeed", "Speed of the sheep?", "20");
-		p.add("sheepView", "View distance of the sheep?", "5");
-		p.add("plantSpread", "How fast should the plants spread?", "30");
-
-		JButton klar = new JButton("Klar!");
-
-		p.add(klar);
-		klar.addActionListener(p);
-
-		f.add(p);
-		f.pack();
-
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		f.setLocation(screenSize.width / 2 - f.getWidth() / 2, screenSize.height / 2 - f.getHeight() / 2);
-
-		f.setVisible(true);
-//		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		Map<String, JTextField> m = p.getMap();
-
-		new Pasture(
-				Integer.parseInt(m.get("wolfSpeed").getText()),
-				Integer.parseInt(m.get("wolfView").getText()),
-				Integer.parseInt(m.get("sheepSpeed").getText()),
-				Integer.parseInt(m.get("sheepView").getText()));
+		new InitialParameters();
 	}
 }

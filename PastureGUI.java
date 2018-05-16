@@ -3,6 +3,12 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 public class PastureGUI extends JFrame implements ActionListener {
 
 	private final ImageIcon II_EMPTY = new ImageIcon("empty.gif");
@@ -111,10 +117,17 @@ public class PastureGUI extends JFrame implements ActionListener {
 		if (l == null) {
 			l = new ArrayList<ImageIcon>();
 			icons.put(p, l);
-		}
+		}	
 		l.add(icon);
-
-		grid[p.x][p.y].setIcon(icon);
+		
+		// Dokumentera detta i kompletteringen...
+		if (e instanceof Plant) {
+			if (icons.get(p).size() <= 1) {
+				grid[p.x][p.y].setIcon(icon);
+			}
+		} else {
+			grid[p.x][p.y].setIcon(icon);
+		}
 
 		size++;
 	}

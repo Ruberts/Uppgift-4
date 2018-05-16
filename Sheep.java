@@ -1,25 +1,34 @@
 import javax.swing.ImageIcon;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 public class Sheep extends Animal {
 	
-	public Sheep(Pasture pasture, int speed, int distance) {
-		super(pasture, speed, distance);
+	final int withoutFood = 100;
+	final int breedTimer = 101;
+	
+	public Sheep(Pasture pasture, int moveSpeed, int viewDistance) {
+		super(pasture, moveSpeed, viewDistance);
 		this.image = new ImageIcon("resource/sheep.gif");
 		this.lastX = 1;
 		this.lastY = 1;
-		this.liveWithoutFood = 100;
-		this.timeToMultiply = 101;
-		this.multiplayInterval = 101;
+		this.liveWithoutFood = withoutFood;
+		this.timeToMultiply = breedTimer;
+		this.multiplayInterval = breedTimer;
 		this.hasEaten = false;
 		this.lastMealTime = pasture.getTime();
 	}
 
 	@Override
 	public void tick() {
-		if (alive) {
+		if(alive) {
 			moveTheEntity();
-			starveToDeath(lastMealTime, liveWithoutFood, this);
-			multiplyEntity(hasEaten, timeToMultiply, this);
+			starveToDeath(lastMealTime, liveWithoutFood);
+			multiplyEntity(hasEaten, timeToMultiply);
 		}
 	}
 	
@@ -46,7 +55,12 @@ public class Sheep extends Animal {
 			otherEntity.kill();
 			hasEaten = true;
 			lastMealTime = pasture.getTime();
-			System.out.println("sheep ate a plant at " + lastMealTime);
 		}	
+	}
+
+	@Override
+	Animal breed() {
+		System.out.println("Sheep breeds!");
+		return new Sheep(pasture, moveInterval, viewDistance);
 	}
 }

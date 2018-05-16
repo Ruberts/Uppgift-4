@@ -1,24 +1,34 @@
 import javax.swing.ImageIcon;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 public class Wolf extends Animal {
 	
-	public Wolf(Pasture pasture, int speed, int viewDistance) {
-		super(pasture, speed, viewDistance);
+	final int withoutFood = 200;
+	final int breedTimer = 201;
+	
+	public Wolf(Pasture pasture, int moveSpeed, int viewDistance) {
+		super(pasture, moveSpeed, viewDistance);
 		this.image = new ImageIcon("resource/wolf.gif");
 		this.lastX = 1;
 		this.lastY = 1;
-		this.liveWithoutFood = 200;
-		this.timeToMultiply = 201;
+		this.liveWithoutFood = withoutFood;
+		this.timeToMultiply = breedTimer;
+		this.multiplayInterval = breedTimer;
 		this.hasEaten = false;
 		this.lastMealTime = pasture.getTime();
 	}
 
 	@Override
 	public void tick() {
-		if (alive) {
+		if(alive) {
 			moveTheEntity();
-			starveToDeath(lastMealTime, liveWithoutFood, this);
-			multiplyEntity(hasEaten, liveWithoutFood, this);
+			starveToDeath(lastMealTime, liveWithoutFood);
+			multiplyEntity(hasEaten, timeToMultiply);
 		}
 	}
 
@@ -44,7 +54,12 @@ public class Wolf extends Animal {
 			otherEntity.kill();
 			hasEaten = true;
 			lastMealTime = pasture.getTime();
-			System.out.println("Wolf ate a sheep at " + lastMealTime);
 		}
+	}
+
+	@Override
+	Animal breed() {
+		System.out.println("Wolf breeds!");
+		return new Wolf(pasture, moveInterval, viewDistance);
 	}
 }

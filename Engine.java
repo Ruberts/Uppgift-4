@@ -2,6 +2,12 @@ import java.util.*;
 import javax.swing.Timer;
 import java.awt.event.*;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 /**
  * The simulation is run by an internal timer that sends out a 'tick'
  * with a given interval. One tick from the timer means that each

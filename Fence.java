@@ -4,6 +4,12 @@ import java.util.MissingResourceException;
 
 import javax.swing.ImageIcon;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 public class Fence implements Entity{	
 	private final ImageIcon image = new ImageIcon("resource/fence.gif");
 	private final Pasture pasture;
@@ -19,6 +25,7 @@ public class Fence implements Entity{
 
 	@Override
 	public boolean isCompatible(Entity otherEntity) {
+		/* No other entity can be on the same position as a fence */
 		return false;
 	}
 
@@ -69,7 +76,7 @@ public class Fence implements Entity{
 	}
 
 	@Override
-	public void multiplyEntity(boolean eaten, int time, Entity e) {
+	public void multiplyEntity(boolean eaten, int time) {
 		// TODO Auto-generated method stub		
 	}
 }

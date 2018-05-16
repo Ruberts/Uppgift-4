@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
-
 import javax.swing.ImageIcon;
+
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
 
 public abstract class Animal implements Entity {
 	
@@ -23,68 +28,70 @@ public abstract class Animal implements Entity {
 	protected ImageIcon image;
 	protected final Engine engine;
 	
-	public Animal(Pasture pasture, int moveInterval, int viewDistance) {
+	public Animal(Pasture pasture, int moveSpeed, int viewDistance) {
 		this.pasture = pasture;
-		this.moveInterval = moveInterval;
+		this.moveInterval = moveSpeed;
 		this.moveDelay = this.moveInterval;
 		this.viewDistance = viewDistance;
 		this.alive = true;
 		this.engine = new Engine(pasture);
 	}
 	
+	abstract Animal breed();
+	
 	/* Animals multiply if correct conditions are fulfilled */
-	public void multiplyEntity(boolean eaten, int time, Entity e) {
+	public void multiplyEntity(boolean eaten, int time) {
 		if(eaten && (timeToMultiply-- <= 0)) {
-			if(pasture.getFreeNeighbours(this).size() > 0) {
-				if(e instanceof Sheep) {
-					pasture.addEntity(new Sheep(pasture, this.moveInterval, this.viewDistance), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
-
-				} else if(e instanceof Wolf) {
-					pasture.addEntity(new Wolf(pasture, this.moveInterval, this.viewDistance), pasture.getFreeNeighbours(this).get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
-				}
+			if(pasture.getFreeNeighbors(this).size() > 0) {
+				pasture.addEntity(breed(), pasture.getFreeNeighbors(this).get((int) (Math.random() * pasture.getFreeNeighbors(this).size())));
+//				if(this instanceof Sheep) {
+//					pasture.addEntity(new Sheep(pasture, this.moveInterval, this.viewDistance), pasture.getFreeNeighbors(this).get((int) (Math.random() * pasture.getFreeNeighbors(this).size())));
+//
+//				} else if(this instanceof Wolf) {
+//					pasture.addEntity(new Wolf(pasture, this.moveInterval, this.viewDistance), pasture.getFreeNeighbors(this).get((int) (Math.random() * pasture.getFreeNeighbors(this).size())));
+//				}
 
 				/* "Reset" the timer for the newly born Animal */
-				this.timeToMultiply = multiplayInterval;
-				this.hasEaten = false;
+				timeToMultiply = multiplayInterval;
+				hasEaten = false;
 			}
 		}
 	}
 
 	/* If the Animal hasn't eaten in a set amount of time, it'll die of starvation */
-	public void starveToDeath(int lastMeal, int withoutFood, Entity e) {
+	public void starveToDeath(int lastMeal, int withoutFood) {
 		if((pasture.getTime() - lastMeal) >= withoutFood) {
-			System.out.println(e.getClass().getName() + " died of starvation!");
-			e.kill();
+			kill();
 		}
 	}
 	
-	/* "Kill" the animal if hasn't eaten in a set amount of time.. */
+	/* "Kill" the animal if it hasn't eaten in a set amount of time.. */
 	public void kill() {
 		this.alive = false;
 		pasture.removeEntity(this);
 	}
 	
-	/* Calculate next direction for movement */
+	/* Calculate next direction for movement and eat if possible */
 	public void moveTheEntity() {
 		moveDelay--;
 		if (moveDelay == 0) {	
 			List<Entity> entitisInView = pasture.getEntitiesWithinView(pasture.getEntityPosition(this), this.viewDistance);
 			
-			Map<Point, Double> scoredNeighbours = new HashMap<Point, Double>();
+			Map<Point, Double> scoredNeighbors = new HashMap<Point, Double>();
 			Point entityPosition = pasture.getEntityPosition(this);
 			
-			for(Point neighbour : pasture.getAllNeighbours(entityPosition)) {
+			for(Point neighbor : pasture.getAllNeighbors(entityPosition)) {
 				Double score = 0.0;
 				
 				for(Entity e : entitisInView) {
-					Double distance = neighbour.distance(pasture.getEntityPosition(e));
+					Double distance = neighbor.distance(pasture.getEntityPosition(e));
 
 					if(this instanceof Sheep) {
 						if(e instanceof Plant) {
 							score += 100 / (1 + distance);
 						}
 						if(e instanceof Wolf) {
-							score += 100 *(1 + distance);
+							score += (100*distance) - distance;
 						}
 
 					}
@@ -94,46 +101,41 @@ public abstract class Animal implements Entity {
 						}						
 					}	
 				}
-				scoredNeighbours.put(neighbour, score);
+				scoredNeighbors.put(neighbor, score);
 			}
 			
 			/* Get direction */
 			Map.Entry<Point, Double> maxEntry = null;
-			for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
+			for (Map.Entry<Point, Double> entry : scoredNeighbors.entrySet()) {
 				if(maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
 					maxEntry = entry;
 				}
 			}
-			Point preferredNeighbour = maxEntry.getKey();
+			Point preferredNeighbor = maxEntry.getKey();
 			
 			/* If there's no interesting direction continue on the same direction */
-			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-				preferredNeighbour = new Point(
+			if(pasture.getFreeNeighbors(this).contains(preferredNeighbor) == false) {
+				preferredNeighbor = new Point(
 						(int) pasture.getEntityPosition(this).getX() + lastX,
 						(int) pasture.getEntityPosition(this).getY() + lastY);
 			}
 			
-//			/* If there's a threat, move away from it */
-//			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == true) {
-//				
-//			}
-		
-			/* If last direction isn't possible, take a random direction */
-			if(pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-				preferredNeighbour = getRandomMember(pasture.getFreeNeighbours(this));
+			/* If preferred direction isn't possible, take a random direction */
+			if(pasture.getFreeNeighbors(this).contains(preferredNeighbor) == false) {
+				preferredNeighbor = getRandomMember(pasture.getFreeNeighbors(this));
 			}
 			
 			/* Update the direction */
-			lastX = (int)preferredNeighbour.getX() - (int)pasture.getEntityPosition(this).getX();
-			lastY = (int)preferredNeighbour.getY() - (int)pasture.getEntityPosition(this).getY();
+			lastX = (int)preferredNeighbor.getX() - (int)pasture.getEntityPosition(this).getX();
+			lastY = (int)preferredNeighbor.getY() - (int)pasture.getEntityPosition(this).getY();
 			
 			/* Move the Animal */
-			pasture.moveEntity(this, preferredNeighbour);
+			pasture.moveEntity(this, preferredNeighbor);
 			this.moveDelay = this.moveInterval;
 
 			/* Eat the other entity if on same position */
 			for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
-				this.eatOtherEntity(e);
+				eatOtherEntity(e);
 			}
 		}
 	}
@@ -176,8 +178,7 @@ public abstract class Animal implements Entity {
 	}
 	
 	/**
-	 * A general method for grabbing a random element from a list. Does it belong in
-	 * this class?
+	 * A general method for grabbing a random element from a list. 
 	 */
 	public static <X> X getRandomMember(List<X> c) {
 		if (c.size() == 0)

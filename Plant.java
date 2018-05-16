@@ -4,32 +4,36 @@ import java.util.MissingResourceException;
 
 import javax.swing.ImageIcon;
 
+/*
+ * Author: Fredrik Robertsson
+ * E-mail: fredrik.c.robertsson@gmail.com
+ * 
+ */
+
 public class Plant implements Entity {
 	private final ImageIcon image = new ImageIcon("resource/plant.gif");
 	private final Pasture pasture;
 	protected boolean alive;
+	private int spreadDelay, spreadInterval;
 	
-	/* Interval until the plant spreads */
-	static final int spreadInterval = 50;
-	private int spreadingDelay;
-	
-	public Plant(Pasture pasture) {
+	public Plant(Pasture pasture, int spreadInterval) {
 		this.pasture = pasture;
-		this.spreadingDelay = spreadInterval;
+		this.spreadDelay = spreadInterval;
+		this.spreadInterval = spreadInterval;
 		this.alive = true;
 	}
 
 	@Override
 	public void tick() {
 		if (alive) {
-			if (spreadingDelay-- <= 0) {
+			if (spreadDelay-- <= 0) {
 				/* Check surroundings for an empty space to grow */
-				if (pasture.getFreeNeighbours(this).size() > 0) {
-					pasture.addEntity(new Plant(pasture), pasture.getFreeNeighbours(this)
-							.get((int) (Math.random() * pasture.getFreeNeighbours(this).size())));
+				if (pasture.getFreeNeighbors(this).size() > 0) {
+					pasture.addEntity(new Plant(pasture, this.spreadInterval), pasture.getFreeNeighbors(this)
+							.get((int) (Math.random() * pasture.getFreeNeighbors(this).size())));
 					
 					/* "Reset" the timer for the newly created plant */
-					this.spreadingDelay = spreadInterval;
+					this.spreadDelay = spreadInterval;
 				}
 			}
 		}
@@ -81,7 +85,9 @@ public class Plant implements Entity {
 	}
 	
 	@Override
-	public void eatOtherEntity(Entity otherEntity) {}
+	public void eatOtherEntity(Entity otherEntity) {
+		// TODO Auto-generated method stub		
+	}
 
 	@Override
 	public void kill() {
@@ -90,7 +96,7 @@ public class Plant implements Entity {
 	}
 
 	@Override
-	public void multiplyEntity(boolean eaten, int time, Entity e) {
+	public void multiplyEntity(boolean eaten, int time) {
 		// TODO Auto-generated method stub
 	}
 }
