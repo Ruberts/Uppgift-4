@@ -28,7 +28,7 @@ public class InitialParameters extends JPanel implements ActionListener {
 		add("wolfView", " View distance of the wolf?", "4");
 		add("sheepSpeed", " Speed of the sheep?", "4");
 		add("sheepView", " View distance of the sheep?", "3");
-		add("plantSpread", " How fast should the plants spread?", "50");
+		add("plantSpread", " How fast should the plants spread?", "35");
 		
 		JButton klar = new JButton("Klar!");
 		add(klar);

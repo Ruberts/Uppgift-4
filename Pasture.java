@@ -21,8 +21,8 @@ public class Pasture {
 	private final int width = 35;
 	private final int height = 24;
 
-	private final int wolves = 1;//10
-	private final int sheep = 5;//20
+	private final int wolves = 10;//10
+	private final int sheep = 20;//20
 	private final int plants = 40;
 	private final int fences = 40;
 

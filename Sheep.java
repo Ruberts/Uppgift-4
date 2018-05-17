@@ -27,8 +27,9 @@ public class Sheep extends Animal {
 	public void tick() {
 		if(alive) {
 			moveTheEntity();
-			starveToDeath(lastMealTime, liveWithoutFood);
+			eat();
 			multiplyEntity(hasEaten, timeToMultiply);
+			starveToDeath(lastMealTime, liveWithoutFood);
 		}
 	}
 	
@@ -39,13 +40,18 @@ public class Sheep extends Animal {
 
 	@Override
 	public boolean isCompatible(Entity otherEntity) {
-		if(otherEntity instanceof Plant) {
-			return true;
+		// if(otherEntity instanceof Plant) {
+		// return true;
+		// }
+		// if(otherEntity instanceof Wolf) {
+		// return true;
+		// }
+		if (otherEntity instanceof Fence) {
+			return false;
+			
 		}
-		if(otherEntity instanceof Wolf) {
-			return true;
-		}
-		return false;
+		return true;
+
 	}
 
 
@@ -60,7 +66,19 @@ public class Sheep extends Animal {
 
 	@Override
 	Animal breed() {
-		System.out.println("Sheep breeds!");
 		return new Sheep(pasture, moveInterval, viewDistance);
+	}
+
+	@Override
+	double getScore(Entity e, Double distance) {
+		if(e instanceof Plant) {
+			return 100 / (1 + distance);
+		}
+		else if(e instanceof Wolf) {
+			return (100 * distance) - distance;
+		}
+		else {
+			return 0.0;
+		}
 	}
 }
