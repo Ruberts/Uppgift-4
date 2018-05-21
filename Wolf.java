@@ -41,19 +41,13 @@ public class Wolf extends Animal {
 
 	@Override
 	public boolean isCompatible(Entity otherEntity) {
-//		if(otherEntity instanceof Plant) {
-//			return true;
-//		}
-//		if(otherEntity instanceof Sheep) {
-//			return true;
-//		}
-//		return false;
-		
-		if (otherEntity instanceof Fence) {
-			return false;
-			
+		if (otherEntity instanceof Plant) {
+			return true;
 		}
-		return true;
+		if (otherEntity instanceof Sheep) {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

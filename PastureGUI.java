@@ -120,7 +120,6 @@ public class PastureGUI extends JFrame implements ActionListener {
 		}	
 		l.add(icon);
 		
-		// Dokumentera detta i kompletteringen...
 		if (e instanceof Plant) {
 			if (icons.get(p).size() <= 1) {
 				grid[p.x][p.y].setIcon(icon);

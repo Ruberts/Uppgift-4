@@ -41,6 +41,7 @@ public abstract class Animal implements Entity {
 	/* If conditions is correct the animal is able to breed! */
 	abstract Animal breed();
 	
+	/* Get the score of to determine which direction to move */
 	abstract double getScore(Entity e, Double distance);
 	
 	/* Living animals has to eat */
@@ -56,11 +57,9 @@ public abstract class Animal implements Entity {
 		if(eaten && (timeToMultiply-- <= 0)) {
 			if(pasture.getFreeNeighbors(this).size() > 0) {
 				pasture.addEntity(breed(), pasture.getFreeNeighbors(this).get((int) (Math.random() * pasture.getFreeNeighbors(this).size())));
-//				 Rapport: Tog bort kod här och lade till en breed metod.
 						
 				/* "Reset" the timer for the newly born Animal */
 				timeToMultiply = multiplayInterval;
-//				 Rapport: hasEaten = false;
 			}
 		}
 	}
@@ -94,23 +93,6 @@ public abstract class Animal implements Entity {
 					Double distance = neighbor.distance(pasture.getEntityPosition(e));
 					
 					score += getScore(e, distance);
-//					Rapport:
-//					Skapade en ny metod getScore och lade dem i klasserna
-					
-//					if(this instanceof Sheep) {
-//						if(e instanceof Plant) {
-//							score += 100 / (1 + distance);
-//						}
-//						if(e instanceof Wolf) {
-//							score += (100*distance) - distance;
-//						}
-//
-//					}
-//					else if(this instanceof Wolf) {
-//						if(e instanceof Sheep) {
-//							score += 100 / (1 + distance);
-//						}						
-//					}	
 				}
 				scoredNeighbors.put(neighbor, score);
 			}
@@ -143,13 +125,6 @@ public abstract class Animal implements Entity {
 			/* Move the Animal */
 			pasture.moveEntity(this, preferredNeighbor);
 			this.moveDelay = this.moveInterval;
-//			
-//			Rapport:
-//			lade denna kod i eat istället
-//			/* Eat the other entity if on same position */
-//			for(Entity e : pasture.getEntitiesAt(pasture.getEntityPosition(this))){
-//				eatOtherEntity(e);
-//			}
 		}
 	}
 	
